@@ -1,37 +1,26 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 
-const aiPrompts = [
-  "Summarize this meeting note...",
-  "List action items from the discussion...",
-  "Draft a follow-up email...",
-  "Find connections to 'Project Aurora'..."
+// Simulation steps for the AI terminal
+const aiSteps = [
+  { text: "Scanning recent meeting notes...", color: "text-blue-400" },
+  { text: "Identifying action items...", color: "text-amber-400" },
+  { text: "Finding correlations...", color: "text-purple-400" },
+  { text: "Generating summary...", color: "text-green-400" },
 ];
 
 export default function AISection() {
-  const [text, setText] = useState("");
-  const [promptIndex, setPromptIndex] = useState(0);
-  const [isDeleting, setIsDeleting] = useState(false);
+  const [stepIndex, setStepIndex] = useState(0);
 
   useEffect(() => {
-    const currentPrompt = aiPrompts[promptIndex];
-    const typeSpeed = isDeleting ? 50 : 100;
+    const interval = setInterval(() => {
+      setStepIndex((prev) => (prev + 1) % aiSteps.length);
+    }, 2000); // Change step every 2 seconds for a lively feel
 
-    const timeout = setTimeout(() => {
-      if (!isDeleting && text === currentPrompt) {
-        setTimeout(() => setIsDeleting(true), 1500);
-      } else if (isDeleting && text === "") {
-        setIsDeleting(false);
-        setPromptIndex((prev) => (prev + 1) % aiPrompts.length);
-      } else {
-        setText(currentPrompt.substring(0, text.length + (isDeleting ? -1 : 1)));
-      }
-    }, typeSpeed);
-
-    return () => clearTimeout(timeout);
-  }, [text, isDeleting, promptIndex]);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <section className="relative w-full py-48 overflow-hidden">
@@ -84,30 +73,62 @@ export default function AISection() {
             whileInView={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            style={{ borderRadius: "24px" }} // STRICT: rounded-3xl
+            style={{ borderRadius: "24px" }}
           >
             {/* Terminal Header */}
-            <div className="flex items-center gap-2 mb-6 opacity-50">
-              <div className="w-3 h-3 rounded-full bg-red-500" />
-              <div className="w-3 h-3 rounded-full bg-yellow-500" />
-              <div className="w-3 h-3 rounded-full bg-green-500" />
+            <div className="flex items-center justify-between mb-6 opacity-50 border-b border-white/10 pb-4">
+               <div className="flex gap-2">
+                 <div className="w-3 h-3 rounded-full bg-red-500" />
+                 <div className="w-3 h-3 rounded-full bg-yellow-500" />
+                 <div className="w-3 h-3 rounded-full bg-green-500" />
+               </div>
+               <div className="text-xs font-mono text-slate-500">ai_processor.exe</div>
             </div>
 
-            <div className="space-y-4 font-mono text-sm">
-              <div className="text-[#94A3B8]">// AI Command Palette</div>
-              <div className="text-[#A855F7] flex items-center">
-                <span className="mr-2">&gt;</span>
-                {text}
-                <span className="w-2 h-4 bg-[#A855F7] ml-1 animate-pulse"/>
-              </div>
+            <div className="space-y-4 font-mono text-sm h-[200px] relative">
+              <div className="text-[#94A3B8] opacity-50">// Initializing neural link...</div>
               
-              <div 
-                className="p-4 bg-white/5 border border-[rgba(255,255,255,0.08)] mt-4 text-[#94A3B8] leading-relaxed"
-                style={{ borderRadius: "12px" }} // STRICT: rounded-xl for inner
-              >
-                <span className="text-[#94A3B8] text-xs uppercase mb-2 block opacity-50">Output</span>
-                Here is a summary of your meeting notes with action items highlighted...
-              </div>
+              <AnimatePresence mode="popLayout">
+                <motion.div 
+                  key={stepIndex}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="space-y-2"
+                >
+                  <div className="flex items-center gap-2">
+                     <span className="text-[#A855F7]">➜</span>
+                     <span className={aiSteps[stepIndex].color}>{aiSteps[stepIndex].text}</span>
+                  </div>
+                  
+                  {/* Fake Progress Bar */}
+                  <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden mt-2">
+                    <motion.div 
+                      className="h-full bg-[#A855F7]" 
+                      initial={{ width: "0%" }}
+                      animate={{ width: "100%" }}
+                      transition={{ duration: 1.5, ease: "linear" }}
+                    />
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+
+              {/* Persistent Output Card */}
+               <motion.div 
+                 className="absolute bottom-0 left-0 right-0 p-4 bg-white/5 border border-white/10 mt-4 text-[#94A3B8] leading-relaxed backdrop-blur-md"
+                 initial={{ opacity: 0 }}
+                 animate={{ opacity: 1 }}
+                 transition={{ delay: 0.5 }}
+                 style={{ borderRadius: "12px" }}
+               >
+                 <div className="flex items-center gap-2 mb-2">
+                    <ZapIcon className="w-3 h-3 text-yellow-400" />
+                    <span className="text-xs uppercase tracking-wider text-slate-400">Insight Generated</span>
+                 </div>
+                 <p className="text-xs">
+                   Found 3 potential conflicts in "Q4 Strategy" and "Budget Review". Suggested rescheduling per team availability.
+                 </p>
+               </motion.div>
             </div>
 
             {/* Ambient Glow */}
@@ -116,5 +137,13 @@ export default function AISection() {
         </div>
       </div>
     </section>
+  );
+}
+
+function ZapIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+    </svg>
   );
 }

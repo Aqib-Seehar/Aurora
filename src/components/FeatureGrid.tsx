@@ -1,168 +1,132 @@
 "use client";
 
-import { motion, useMotionValue, useSpring } from "framer-motion";
-import { MouseEvent, useRef } from "react";
-import { Zap, Network, Shield, Smartphone, Calendar, Share2, Search, Sparkles } from "lucide-react";
+import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+import { useRef } from "react";
+import { 
+  Zap, 
+  Shield, 
+  Share2, 
+  Search, 
+  Smartphone, 
+  Globe 
+} from "lucide-react";
 
 const features = [
   {
-    title: "Built for speed",
-    description: "Instantly capture ideas with a global hotkey. No loading, no friction.",
     icon: Zap,
-    colSpan: "md:col-span-2",
+    title: "Built for speed",
+    description: "Instantly syncs across all your devices. Offline-first architecture ensures you never lose a thought.",
+    gradient: "from-amber-500/20 to-orange-500/20",
+    accent: "text-amber-400"
   },
   {
-    title: "Networked notes",
-    description: "Connect your thoughts with back-links and see how ideas relate.",
-    icon: Network,
-    colSpan: "md:col-span-1",
-  },
-  {
-    title: "End-to-end encryption",
-    description: "Your data is secure and private by default. We can't read your notes.",
     icon: Shield,
-    colSpan: "md:col-span-1",
+    title: "End-to-end encryption",
+    description: "Your notes are encrypted locally before they ever touch our servers. Only you can read them.",
+    gradient: "from-green-500/20 to-emerald-500/20",
+    accent: "text-emerald-400"
   },
   {
-    title: "iOS app",
-    description: "Capture on the go, sync instantly across all your devices.",
-    icon: Smartphone,
-    colSpan: "md:col-span-2",
-  },
-  {
-    title: "Calendar integration",
-    description: "Sync with Google and Outlook to capture meeting notes automatically.",
-    icon: Calendar,
-    colSpan: "md:col-span-1",
-  },
-  {
-    title: "Publishing",
-    description: "Share your notes with a single click. Beautiful by default.",
     icon: Share2,
-    colSpan: "md:col-span-1",
+    title: "Seamless sharing",
+    description: "Share notes with a single click. Collaborate with your team in real-time with perfect sync.",
+    gradient: "from-blue-500/20 to-cyan-500/20",
+    accent: "text-cyan-400"
   },
   {
-    title: "Instant search",
-    description: "Find anything in milliseconds with our blazing fast search.",
     icon: Search,
-    colSpan: "md:col-span-1",
+    title: "Instant search",
+    description: "Find anything in milliseconds. Our fuzzy search algorithm understands what you mean.",
+    gradient: "from-purple-500/20 to-pink-500/20",
+    accent: "text-purple-400"
   },
   {
-    title: "AI assistant",
-    description: "Let AI help you organize, summarize, and expand your thoughts.",
-    icon: Sparkles,
-    colSpan: "md:col-span-1",
+    icon: Smartphone,
+    title: "Mobile first",
+    description: "A native iOS app that feels like magic. Capture thoughts on the go with zero friction.",
+    gradient: "from-rose-500/20 to-red-500/20",
+    accent: "text-rose-400"
   },
+  {
+    icon: Globe,
+    title: "Publish to web",
+    description: "Turn any note into a public webpage. Perfect for blogs, documentation, or sharing ideas.",
+    gradient: "from-indigo-500/20 to-violet-500/20",
+    accent: "text-indigo-400"
+  }
 ];
 
-interface SpotlightCardProps {
-  children: React.ReactNode;
-  className?: string;
-}
-
-function SpotlightCard({ children, className = "" }: SpotlightCardProps) {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  // Smooth spring animation for spotlight
-  const springConfig = { stiffness: 100, damping: 30 };
-  const spotlightX = useSpring(mouseX, springConfig);
-  const spotlightY = useSpring(mouseY, springConfig);
-
-  const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    mouseX.set(e.clientX - rect.left);
-    mouseY.set(e.clientY - rect.top);
-  };
-
-  const handleMouseLeave = () => {
-    mouseX.set(0);
-    mouseY.set(0);
-  };
-
+// Reusable card component without 3D rotation, just subtle physics
+function FeatureCard({ feature, index }: { feature: any, index: number }) {
   return (
     <motion.div
-      ref={cardRef}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      className={`glass-card relative overflow-hidden p-8 ${className}`}
-      style={{ borderRadius: "24px" }} // STRICT: rounded-3xl
-      whileHover={{ y: -4 }}
+      className="glass-card relative overflow-hidden p-8 flex flex-col h-full"
+      style={{ borderRadius: "24px" }}
+      whileHover={{ y: -5 }}
       whileTap={{ scale: 0.98 }}
-      transition={{ duration: 0.3 }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
     >
-      {/* Spotlight Effect */}
-      <motion.div
-        className="pointer-events-none absolute opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-        style={{
-          width: 600,
-          height: 600,
-          background: "radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, transparent 70%)",
-          borderRadius: "50%",
-          left: spotlightX,
-          top: spotlightY,
-          transform: "translate(-50%, -50%)",
-        }}
-      />
-      
-      {children}
+      {/* Icon */}
+      <div className="icon-wrapper w-14 h-14 mb-6 flex items-center justify-center">
+        <feature.icon className={`w-7 h-7 ${feature.accent}`} strokeWidth={1.5} />
+      </div>
+
+      <h3 className="text-xl font-semibold text-white mb-3">
+        {feature.title}
+      </h3>
+      <p className="text-slate-400 leading-relaxed text-base">
+        {feature.description}
+      </p>
+
+      {/* Subtle Gradient Blob */}
+      <div className={`absolute -right-4 -bottom-4 w-32 h-32 bg-gradient-to-br ${feature.gradient} blur-3xl opacity-0 group-hover:opacity-30 transition-opacity duration-500`} />
     </motion.div>
   );
 }
 
 export default function FeatureGrid() {
+  const containerRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"]
+  });
+
+  // Parallax Lift: Odd columns move slightly differently than even ones to create depth
+  // We use a spring to smooth out the parallax movement itself
+  const physicsSpring = { stiffness: 100, damping: 30, restDelta: 0.001 };
+  const yEven = useSpring(useTransform(scrollYProgress, [0, 1], [0, 0]), physicsSpring);
+  const yOdd = useSpring(useTransform(scrollYProgress, [0, 1], [50, -50]), physicsSpring);
+
   return (
-    <section className="w-full max-w-6xl px-4 py-40 mx-auto">
+    <section ref={containerRef} className="w-full max-w-6xl px-4 py-40 mx-auto relative z-10">
       {/* Section Header */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        viewport={{ once: true }}
-        className="text-center mb-16"
-      >
-        <h2 className="text-4xl md:text-5xl font-bold text-gradient mb-4">
-          Everything you need
+      <div className="text-center mb-20">
+        <h2 className="text-3xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-white to-white/60 mb-6">
+          Everything you need <br /> to think clearly.
         </h2>
-        <p className="text-[#94A3B8] text-lg max-w-2xl mx-auto">
-          A complete toolkit for capturing, organizing, and connecting your thoughts.
+        <p className="text-lg text-slate-400 max-w-2xl mx-auto">
+          Powerful features wrapped in a beautiful, distraction-free interface.
         </p>
-      </motion.div>
+      </div>
 
-      {/* Feature Grid */}
-      <motion.div
-        initial={{ opacity: 0, y: 50 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.2 }}
-        viewport={{ once: true }}
-        className="grid grid-cols-1 md:grid-cols-4 gap-4"
-      >
-        {features.map((feature, index) => (
-          <SpotlightCard
-            key={index}
-            className={`col-span-1 ${feature.colSpan} group min-h-[200px] flex flex-col justify-between`}
-          >
-            {/* Icon Wrapper - STRICT: bg-white/5, rounded-xl */}
-            <div className="icon-wrapper mb-6">
-              <feature.icon 
-                className="w-5 h-5 text-[#A855F7]" 
-                strokeWidth={1.5} // STRICT: Fine/Premium look
-              />
-            </div>
+      {/* Grid Layout - 3 Columns */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {features.map((feature, index) => {
+          // Determine column for parallax logic (simplified for 3-col grid)
+          // Col 0, 3, 6... (Mod 3 == 0) -> Even (No lift)
+          // Col 1, 4, 7... (Mod 3 == 1) -> Odd (Lift)
+          // Col 2, 5, 8... (Mod 3 == 2) -> Even (No lift, or different lift)
+          
+          const isParallax = index % 2 !== 0; // Simple even/odd logic for visual interest
+          const y = isParallax ? yOdd : yEven;
 
-            <div>
-              <h3 className="text-xl font-semibold text-white mb-2 text-glow-hover">
-                {feature.title}
-              </h3>
-              <p className="text-[#94A3B8] text-sm leading-relaxed">
-                {feature.description}
-              </p>
-            </div>
-          </SpotlightCard>
-        ))}
-      </motion.div>
+          return (
+            <motion.div key={feature.title} style={{ y }} className="h-full">
+              <FeatureCard feature={feature} index={index} />
+            </motion.div>
+          );
+        })}
+      </div>
     </section>
   );
 }
