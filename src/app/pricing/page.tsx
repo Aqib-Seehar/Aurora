@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { Check } from "lucide-react";
-import { PageHeader } from "@/components/layouts/PageHeader";
+import PageHeader from "@/components/layouts/PageHeader";
 
 const plans = [
   {
