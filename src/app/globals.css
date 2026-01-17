@@ -1,0 +1,300 @@
+@import "tailwindcss";
+
+/* ============================================
+   DESIGN CONSTITUTION - GLOBAL TOKENS
+   ============================================ */
+:root {
+  /* Core Colors */
+  --background: #000000;
+  --foreground: #ffffff;
+
+  /* Text Hierarchy (STRICT) */
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #94a3b8;
+  --color-text-accent: #a855f7;
+
+  /* Glass Materials (STRICT) */
+  --color-glass-bg: rgba(255, 255, 255, 0.03);
+  --color-glass-border: rgba(255, 255, 255, 0.08);
+  --color-glass-border-hover: rgba(255, 255, 255, 0.15);
+
+  /* Accent Palette */
+  --color-accent-purple: #a855f7;
+  --color-accent-purple-light: #c084fc;
+  --color-accent-pink: #ec4899;
+  --color-accent-blue: #3b82f6;
+  --color-accent-green: #22c55e;
+
+  /* Shadow System (STRICT) */
+  --shadow-glow-purple: 0 0 40px -10px rgba(168, 85, 247, 0.15);
+  --shadow-glow-purple-strong: 0 0 60px -10px rgba(168, 85, 247, 0.25);
+
+  /* Primary Glow */
+  --primary-glow: conic-gradient(
+    from 180deg at 50% 50%,
+    #2a8af6 0deg,
+    #a853ba 180deg,
+    #e92a67 360deg
+  );
+  /* Noise Texture */
+  --noise-texture: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+}
+
+@theme {
+  --font-sans: var(--font-inter);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --animate-spin-slow: spin 10s linear infinite;
+  --animate-pulse-slow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* ============================================
+   BASE RESET
+   ============================================ */
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: var(--noise-texture);
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0.4;
+  mix-blend-mode: overlay;
+}
+
+/* ============================================
+   LENIS SMOOTH SCROLL
+   ============================================ */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+/* ============================================
+   TANGIBLE SURFACE SYSTEM (PHASE 1)
+   Premium Glass Cards with Light Physics
+   ============================================ */
+
+/* Primary Glass Card - "Tangible Surface" */
+.glass-card {
+  background: var(--color-glass-bg);
+  border-radius: 24px; /* STRICT: rounded-3xl */
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.1),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+    0 10px 40px -10px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.15),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1),
+    0 10px 40px -10px rgba(0, 0, 0, 0.5),
+    var(--shadow-glow-purple);
+}
+
+/* Legacy Support - Deprecated, use .glass-card */
+.glass-panel {
+  background: var(--color-glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--color-glass-border);
+  border-radius: 24px;
+}
+
+.glass-panel-hover {
+  transition: all 0.3s ease;
+}
+
+.glass-panel-hover:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--color-glass-border-hover);
+  box-shadow: var(--shadow-glow-purple);
+}
+
+/* ============================================
+   TYPOGRAPHY UTILITIES
+   ============================================ */
+
+/* Text Gradient - Top to Bottom (Simulates Overhead Lighting) */
+.text-gradient {
+  background: linear-gradient(
+    to bottom,
+    #fff 0%,
+    rgba(255, 255, 255, 0.8) 50%,
+    rgba(255, 255, 255, 0.4) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Text Glow on Hover */
+.text-glow-hover {
+  transition: text-shadow 0.3s ease;
+}
+
+.text-glow-hover:hover {
+  text-shadow:
+    0 0 20px rgba(168, 85, 247, 0.5),
+    0 0 40px rgba(168, 85, 247, 0.3);
+}
+
+/* ============================================
+   BUTTON SYSTEM
+   ============================================ */
+.btn-glow {
+  box-shadow: 0 0 30px rgba(168, 85, 247, 0.3);
+  transition: all 0.3s ease;
+}
+
+.btn-glow:hover {
+  box-shadow: 0 0 50px rgba(168, 85, 247, 0.5);
+  transform: translateY(-2px);
+}
+
+/* ============================================
+   ICON WRAPPER (STRICT)
+   ============================================ */
+.icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px; /* STRICT: rounded-xl for inner elements */
+}
+
+.icon-wrapper svg {
+  stroke-width: 1.5px; /* STRICT: Fine/Premium look */
+}
+
+/* ============================================
+   SPOTLIGHT EFFECT (For Cards)
+   ============================================ */
+.spotlight-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.spotlight-card::before {
+  content: "";
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(
+    circle,
+    rgba(168, 85, 247, 0.15) 0%,
+    transparent 70%
+  );
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  transform: translate(-50%, -50%);
+}
+
+.spotlight-card:hover::before {
+  opacity: 1;
+}
+
+/* ============================================
+   CONTAINER
+   ============================================ */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ============================================
+   TERMINAL BLOCK
+   ============================================ */
+.terminal-window {
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid var(--color-glass-border);
+  border-radius: 12px; /* rounded-xl for inner */
+  overflow: hidden;
+}
+
+.terminal-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid var(--color-glass-border);
+}
+
+.terminal-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.terminal-dot-red {
+  background: #ff5f56;
+}
+.terminal-dot-yellow {
+  background: #ffbd2e;
+}
+.terminal-dot-green {
+  background: #27c93f;
+}
+
+.terminal-body {
+  padding: 16px;
+  font-family:
+    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* Syntax Highlighting */
+.syntax-keyword {
+  color: #ec4899;
+} /* Pink */
+.syntax-string {
+  color: #22c55e;
+} /* Green */
+.syntax-function {
+  color: #3b82f6;
+} /* Blue */
+.syntax-comment {
+  color: #6b7280;
+} /* Gray */
+.syntax-variable {
+  color: #a855f7;
+} /* Purple */
